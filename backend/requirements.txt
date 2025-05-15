@@ -8,11 +8,11 @@ openai>=1.0
 chromadb>=0.4
 tiktoken
 crawl4ai
-# tqdm and streamlit might not be needed for backend/core
-# tqdm>=4.66.1
-# streamlit>=1.30.0
-langchain-cohere>=0.1.0 # Add Cohere integration 
+langchain-cohere>=0.1.0 
 crawl4ai
-#helicone>=0.1.0
 requests
 psutil
+waitress>=2.0.0
+# tqdm>=4.66.1
+# streamlit>=1.30.0
+#helicone>=0.1.0
