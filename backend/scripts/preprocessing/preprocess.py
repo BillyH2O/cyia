@@ -4,19 +4,24 @@ import json
 import time
 import sys
 from pathlib import Path
-from tqdm import tqdm  
+from tqdm import tqdm
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
+# --- Début des modifications pour Railway ---
+# Path(__file__) est /app/scripts/preprocessing/preprocess.py
+# Path(__file__).resolve().parent.parent.parent est /app (backend/)
+APP_ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(APP_ROOT_DIR))
+# --- Fin des modifications pour Railway ---
 
-ROOT_DIR = Path(__file__).parent.parent.parent
-input_dir = ROOT_DIR / "data/raw"
-output_dir = ROOT_DIR / "data/preprocessed"
+# ROOT_DIR devient APP_ROOT_DIR
+input_dir = APP_ROOT_DIR / "data/raw"
+output_dir = APP_ROOT_DIR / "data/preprocessed"
 long_files_dir = output_dir / "long_files"
 short_files_dir = output_dir / "short_files"
 
-output_dir.mkdir(exist_ok=True)
-long_files_dir.mkdir(exist_ok=True)
-short_files_dir.mkdir(exist_ok=True)
+output_dir.mkdir(exist_ok=True, parents=True)
+long_files_dir.mkdir(exist_ok=True, parents=True)
+short_files_dir.mkdir(exist_ok=True, parents=True)
 
 MIN_CONTENT_LENGTH = 200
 
@@ -30,8 +35,10 @@ stats = {
 
 # Configuration de journalisation
 log_file = output_dir / "preprocess_log.txt"
-with open(log_file, "w", encoding="utf-8") as f:
-    f.write(f"Prétraitement démarré le {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+def initialize_log(): # Fonction pour initialiser le log seulement si le script est exécuté directement
+    with open(log_file, "w", encoding="utf-8") as f:
+        f.write(f"Prétraitement démarré le {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
 
 def log_message(message):
     print(message)
@@ -156,6 +163,7 @@ def process_file(md_file):
         return False
 
 def main():
+    initialize_log() # Initialiser le log au début de main
     # Trouver tous les fichiers markdown
     md_files = list(input_dir.glob("*.md"))
     stats["total"] = len(md_files)

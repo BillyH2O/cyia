@@ -8,21 +8,18 @@ from datetime import datetime
 from urllib.parse import urlparse
 from xml.etree import ElementTree
 from pathlib import Path
+from typing import List, Dict, Any
 
-# Ajouter le répertoire parent au chemin de recherche des modules
-sys.path.append(str(Path(__file__).parent.parent.parent))
 
-# Définir le chemin de sortie data/raw
-ROOT_DIR = Path(__file__).parent.parent.parent.parent
-BACKEND_DIR = Path(__file__).parent.parent.parent  # backend/
-DATA_DIR = BACKEND_DIR / "data"  # Mise à jour: data est maintenant dans backend/
+APP_ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(APP_ROOT_DIR))
+
+DATA_DIR = APP_ROOT_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
 
-# Create output directory if it doesn't exist
-DATA_DIR.mkdir(exist_ok=True)
-RAW_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(exist_ok=True, parents=True) # Assurer que data existe aussi
+RAW_DIR.mkdir(exist_ok=True, parents=True)
 
-from typing import List, Dict, Any
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode
 
 def sanitize_filename(url):
@@ -185,12 +182,12 @@ def get_pydantic_ai_docs_urls():
         print(f"Error fetching sitemap: {e}")
         return []        
 
-async def main():
+async def main(): # Renommer la fonction main en main_async ou autre si run_pipeline l'appelle
     urls = get_pydantic_ai_docs_urls()
     if urls:
         print(f"Found {len(urls)} URLs to crawl")
         print(f"Content will be saved to: {RAW_DIR}")
-        await crawl_parallel(urls, max_concurrent=10)
+        await crawl_parallel(urls, max_concurrent=10) # Garder un max_concurrent raisonnable
     else:
         print("No URLs found to crawl")    
 
