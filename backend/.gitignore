@@ -1,0 +1,48 @@
+# Environnement virtuel
+venv/
+env/
+ENV/
+.venv/
+
+# Fichiers de configuration
+.env
+.env.*
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Datasets et vectorstore
+data/
+data/raw/
+data/preprocessed/
+data/vectorstore/
+
+# Logs et autres
+logs/
+log/
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+.coverage.*
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Autres
+.DS_Store 

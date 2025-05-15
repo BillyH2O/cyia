@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../public/database-diagram.png"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Models for Next-Auth (Auth.js)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // Ajouté pour l'authentification par email/mdp
+  accounts      Account[]
+  sessions      Session[]
+  chats         Chat[]
+  passwordResetTokens PasswordResetToken[] // Ajouté pour la réinitialisation
+  analyticsEntries ChatAnalyticsEntry[] // Inverse relation for analytics
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Models for chat storage
+model Chat {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String?
+  messages  Message[]
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analyticsEntries ChatAnalyticsEntry[] // Inverse relation for analytics
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  content        String   @db.Text
+  role           String   // user or bot
+  processingTime Float?
+  model          String?
+  sources        Source[] // Relation with sources
+  chatId         String
+  chat           Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model Source {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  metadata  Json?    // For storing title, url, etc.
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+// Ajouté pour la réinitialisation de mot de passe
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique // Le jeton unique envoyé à l'utilisateur
+  expires   DateTime // Date d'expiration du jeton
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+// --- Model for Chat Analytics ---
+model ChatAnalyticsEntry {
+  id                String   @id @default(cuid())
+  userId           String
+  chatId           String
+  modelUsed        String
+  wasStreaming     Boolean   @default(false)
+  evaluateSources  Boolean   @default(false)
+  useReranker      Boolean   @default(false)
+  useMultiQuery    Boolean   @default(false)
+  temperature      Float?    @default(1.0)  // Temperature parameter for model generation
+  processingTime   Float?    // Optional: Time taken by backend if available
+  cost             Float?
+  promptTokens     Int?
+  completionTokens Int?
+  totalTokens      Int?
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chat             Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}

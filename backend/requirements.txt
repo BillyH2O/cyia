@@ -1,0 +1,18 @@
+Flask>=2.0
+Flask-Cors>=3.0
+python-dotenv>=0.19
+langchain>=0.1
+langchain-openai>=0.1
+langchain-community>=0.0.13
+openai>=1.0
+chromadb>=0.4
+tiktoken
+crawl4ai
+# tqdm and streamlit might not be needed for backend/core
+# tqdm>=4.66.1
+# streamlit>=1.30.0
+langchain-cohere>=0.1.0 # Add Cohere integration 
+crawl4ai
+#helicone>=0.1.0
+requests
+psutil
