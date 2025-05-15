@@ -27,13 +27,6 @@ aptPkgs = [
     "libxss1",      
     "xvfb", 
     "fonts-liberation", 
-    "wget", 
+    "wget",
     "xdg-utils"
 ]
-
-# [start]
-# Ta commande de démarrage habituelle (si ce nixpacks.toml est pour le service 'job')
-# Si tu utilises un Procfile, cette section 'start' dans nixpacks.toml n'est peut-être pas nécessaire
-# ou elle sera ignorée si le Procfile est détecté pour un service web.
-# Pour ton job `run_pipeline.py`, la commande est définie dans les paramètres du service Railway.
-# cmd = "python scripts/run_pipeline.py" 
