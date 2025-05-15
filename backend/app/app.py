@@ -1,18 +1,25 @@
 import sys
 import os
 from pathlib import Path
+
+# Ajoute le répertoire parent (backend/) au sys.path
+# Path(__file__) est backend/app/app.py
+# Path(__file__).parent est backend/app/
+# Path(__file__).parent.parent est backend/
+sys.path.insert(0, str(Path(__file__).parent.parent)) # Assurez-vous que cette ligne est présente et non commentée
+
 from flask import Flask, request, jsonify, g
 from flask_cors import CORS
 import logging
 import time
 from functools import wraps
 import json
-sys.path.append(str(Path(__file__).parent.parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from backend.RAG.rag_core import AdvancedRAG
-from backend.config import Config
+from RAG.rag_core import AdvancedRAG
+from config import Config
 from dotenv import load_dotenv
-load_dotenv(dotenv_path=Path(__file__).parents[1] / ".env")
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
