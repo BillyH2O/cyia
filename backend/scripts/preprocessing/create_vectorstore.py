@@ -9,19 +9,22 @@ import json
 from tqdm import tqdm
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent.parent))  
+# Path(__file__) est /app/scripts/preprocessing/create_vectorstore.py
+# Path(__file__).resolve().parent.parent.parent est /app (backend/)
+APP_ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(APP_ROOT_DIR))
 
-load_dotenv(dotenv_path=Path(__file__).parents[2] / ".env")
+# Charger les variables d'environnement depuis backend/.env
+load_dotenv(dotenv_path=APP_ROOT_DIR / ".env")
 
 assert os.getenv("OPENAI_API_KEY"), "La clé API OpenAI n'a pas été trouvée dans le fichier .env"
 
-
-ROOT_DIR = Path(__file__).parent.parent.parent.parent 
-BACKEND_DIR = Path(__file__).parent.parent.parent  # backend/
-DATA_DIR = BACKEND_DIR / "data"  # Mise à jour: data est maintenant dans backend/
+# Les chemins sont maintenant relatifs à APP_ROOT_DIR (qui est /backend)
+# ROOT_DIR est maintenant redondant si APP_ROOT_DIR est la référence
+DATA_DIR = APP_ROOT_DIR / "data"
 PREPROCESSED_DIR = DATA_DIR / "preprocessed"
 LONG_FILES_DIR = PREPROCESSED_DIR / "long_files"
-VECTORSTORE_DIR = DATA_DIR / "vectorstore"  
+VECTORSTORE_DIR = DATA_DIR / "vectorstore"
 
 def load_md_with_metadata(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
