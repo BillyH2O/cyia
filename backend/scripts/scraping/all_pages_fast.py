@@ -153,7 +153,7 @@ async def crawl_parallel(urls: List[str], max_concurrent: int = 3):
         print("\nClosing crawler...")
         await crawler.close()
         print("Crawler closed, adding small delay for cleanup...")
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.5) # Délai ajouté
         # Final memory log
         log_memory(prefix="Final: ")
         print(f"\nPeak memory usage (MB): {peak_memory // (1024 * 1024)}")
