@@ -9,8 +9,9 @@ const prisma = new PrismaClient();
 // GET /api/chats/[chatId] - Récupérer un chat spécifique avec ses messages
 export async function GET(
   req: Request,
-  { params }: { params: { chatId: string } }
+  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
 ) {
+  const { chatId } = await ctx.params;
   try {
     const session = await getServerSession(authOptions);
     
@@ -18,7 +19,7 @@ export async function GET(
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
     }
 
-    const chat = await chatService.getChat(params.chatId, session.user.id);
+    const chat = await chatService.getChat(chatId, session.user.id);
     
     if (!chat) {
       return NextResponse.json({ error: 'Chat non trouvé' }, { status: 404 });
@@ -37,9 +38,9 @@ export async function GET(
 // DELETE /api/chats/[chatId] - Supprimer un chat
 export async function DELETE(
   req: Request,
-  { params }: { params: { chatId: string } }
+  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
 ) {
-  const { chatId } = params;
+  const { chatId } = await ctx.params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

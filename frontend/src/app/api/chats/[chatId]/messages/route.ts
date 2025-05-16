@@ -14,9 +14,9 @@ interface Source {
 // POST /api/chats/[chatId]/messages - Ajouter un message à un chat
 export async function POST(
   req: Request,
-  { params }: { params: { chatId: string } }
+  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
 ) {
-  const { chatId } = await Promise.resolve(params);
+  const { chatId } = await ctx.params;
   try {
     const session = await getServerSession(authOptions);
     
@@ -65,9 +65,9 @@ export async function POST(
 
 export async function GET(
   request: Request,
-  { params }: { params: { chatId: string } }
+  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
 ) {
-  const { chatId } = await Promise.resolve(params);
+  const { chatId } = await ctx.params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
