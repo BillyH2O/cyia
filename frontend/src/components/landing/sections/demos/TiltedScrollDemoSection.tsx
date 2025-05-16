@@ -1,8 +1,6 @@
 'use client'
 
-import { TiltedScroll } from "../ui/tilted-scroll";
-
-
+import { TiltedScroll } from "@/components/ui/tilted-scroll";
 
 const customItemsForTiltedScroll = [
   { id: "ts1", text: "Real-time Collaboration" },
