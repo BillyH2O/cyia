@@ -412,8 +412,9 @@ export function useChat(initialChatId?: string | null) {
                 streamedText += jsonData.content;
               }
             } catch (error) {
-              // Si ce n'est pas du JSON, c'est du texte simple
-              console.error('Erreur de parsing JSON:', error);
+              // Si ce n'est pas du JSON, c'est du texte simple. C'est un comportement attendu
+              // pour les fragments de contenu textuel pur envoyés par le backend.
+              // console.error('Erreur de parsing JSON pour la donnée:', data, 'Erreur:', error); // Commenté car ce cas est géré
               streamedText += data;
             }
 
