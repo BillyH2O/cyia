@@ -3,7 +3,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from .config import Config
 from langchain_pinecone import Pinecone as LangchainPinecone 
-from typing import Union
+from typing import Union, List
 from langchain_core.embeddings import Embeddings
 
 class NoOpEmbeddings(Embeddings):

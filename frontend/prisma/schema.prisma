@@ -2,32 +2,25 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// generator erd {
-//   provider = "prisma-erd-generator"
-//   output   = "../public/database-diagram.png"
-// }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Models for Next-Auth (Auth.js)
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -41,17 +34,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?   // Ajouté pour l'authentification par email/mdp
-  accounts      Account[]
-  sessions      Session[]
-  chats         Chat[]
-  passwordResetTokens PasswordResetToken[] // Ajouté pour la réinitialisation
-  analyticsEntries ChatAnalyticsEntry[] // Inverse relation for analytics
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String?              @unique
+  emailVerified       DateTime?
+  image               String?
+  password            String?
+  accounts            Account[]
+  chats               Chat[]
+  analyticsEntries    ChatAnalyticsEntry[]
+  passwordResetTokens PasswordResetToken[]
+  sessions            Session[]
 }
 
 model VerificationToken {
@@ -62,65 +55,62 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Models for chat storage
 model Chat {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  title     String?
-  messages  Message[]
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  analyticsEntries ChatAnalyticsEntry[] // Inverse relation for analytics
+  id               String               @id @default(cuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  title            String?
+  userId           String
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analyticsEntries ChatAnalyticsEntry[]
+  messages         Message[]
 }
 
 model Message {
   id             String   @id @default(cuid())
   createdAt      DateTime @default(now())
-  content        String   @db.Text
-  role           String   // user or bot
+  content        String
+  role           String
   processingTime Float?
   model          String?
-  sources        Source[] // Relation with sources
   chatId         String
   chat           Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sources        Source[]
 }
 
 model Source {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
-  metadata  Json?    // For storing title, url, etc.
+  id        String  @id @default(cuid())
+  content   String
+  metadata  Json?
   messageId String
-  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
-// Ajouté pour la réinitialisation de mot de passe
 model PasswordResetToken {
   id        String   @id @default(cuid())
-  token     String   @unique // Le jeton unique envoyé à l'utilisateur
-  expires   DateTime // Date d'expiration du jeton
+  token     String   @unique
+  expires   DateTime
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// --- Model for Chat Analytics ---
 model ChatAnalyticsEntry {
-  id                String   @id @default(cuid())
-  userId           String
-  chatId           String
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
   modelUsed        String
-  wasStreaming     Boolean   @default(false)
-  evaluateSources  Boolean   @default(false)
-  useReranker      Boolean   @default(false)
-  useMultiQuery    Boolean   @default(false)
-  temperature      Float?    @default(1.0)  // Temperature parameter for model generation
-  processingTime   Float?    // Optional: Time taken by backend if available
+  wasStreaming     Boolean  @default(false)
+  evaluateSources  Boolean  @default(false)
+  useReranker      Boolean  @default(false)
+  useMultiQuery    Boolean  @default(false)
+  processingTime   Float?
+  chatId           String
+  userId           String
+  completionTokens Int?
   cost             Float?
   promptTokens     Int?
-  completionTokens Int?
   totalTokens      Int?
-  createdAt        DateTime @default(now())
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  temperature      Float?   @default(1.0)
   chat             Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
