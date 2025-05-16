@@ -31,6 +31,10 @@ class Config:
     
     # API Keys
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
+    # Pinecone Configuration (ajouté)
+    PINECONE_API_KEY: Optional[str] = os.getenv("PINECONE_API_KEY")
+    PINECONE_ENVIRONMENT: Optional[str] = os.getenv("PINECONE_ENVIRONMENT", "us-east-1") # Défaut si non défini
+    PINECONE_INDEX_NAME: Optional[str] = os.getenv("PINECONE_INDEX_NAME", "cyia")       # Défaut si non défini
     OPENROUTER_API_KEY: Optional[str] = os.getenv("OPENROUTER_API_KEY")
     COHERE_API_KEY: Optional[str] = os.getenv("COHERE_API_KEY")
     GOOGLE_API_KEY: Optional[str] = os.getenv("GOOGLE_API_KEY")
@@ -48,6 +52,9 @@ class Config:
     
     # RAG Parameters
     DEFAULT_K: int = 20  # Default number of documents to retrieve without reranking
+    # Choix du fournisseur de BDD vectorielle (ajouté)
+    # Valeurs possibles: "Chroma", "Pinecone"
+    BDD_PROVIDER: str = os.getenv("BDD_PROVIDER", "Chroma") 
     RERANK_K: int = 20  # Number of documents to retrieve *before* reranking
     LLM_MODEL: str = os.getenv("LLM_MODEL", "gpt-4o")
     
@@ -135,14 +142,27 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def validate_environment() -> None:
     """Validate required environment variables and exit if critical ones are missing."""
-    # OpenAI API key is required for embeddings
-    if not Config.OPENAI_API_KEY:
-        logging.critical("CRITICAL: OPENAI_API_KEY not found in .env file (required for embeddings). Exiting.")
+    # OpenAI API key est requis si Chroma est utilisé (pour les embeddings), ou pour les appels LLM directs
+    if Config.BDD_PROVIDER == "Chroma" and not Config.OPENAI_API_KEY:
+        logging.critical("CRITICAL: OPENAI_API_KEY not found in .env file (required for Chroma embeddings). Exiting.")
         exit(1)
-    
-    # Log if OpenRouter key is missing
-    if not Config.OPENROUTER_API_KEY:
-        logging.info("OPENROUTER_API_KEY not provided. Using OpenAI API for LLM calls.")
+    elif not Config.OPENAI_API_KEY and not Config.OPENROUTER_API_KEY:
+        # Si ni OpenAI ni OpenRouter n'est configuré pour le LLM, c'est un problème aussi
+        logging.critical("CRITICAL: OPENAI_API_KEY or OPENROUTER_API_KEY must be set for LLM calls. Exiting.")
+        exit(1)
+    elif not Config.OPENAI_API_KEY:
+        logging.info("OPENAI_API_KEY not provided. Assurez-vous que OPENROUTER_API_KEY est configuré pour les LLMs.")
+
+    # Valider la configuration Pinecone si c'est le BDD_PROVIDER choisi
+    if Config.BDD_PROVIDER == "Pinecone":
+        if not all([Config.PINECONE_API_KEY, Config.PINECONE_ENVIRONMENT, Config.PINECONE_INDEX_NAME]):
+            logging.critical(
+                "CRITICAL: Configuration Pinecone incomplète (PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX_NAME) "
+                "lorsque BDD_PROVIDER est 'Pinecone'. Exiting."
+            )
+            exit(1)
+        else:
+            logging.info(f"Configuration Pinecone détectée: Index='{Config.PINECONE_INDEX_NAME}', Env='{Config.PINECONE_ENVIRONMENT}'.")
     
     # Warn if Cohere key is missing
     if not Config.COHERE_API_KEY:
@@ -154,10 +174,14 @@ def validate_environment() -> None:
     else:
         logging.info("Helicone API key not found. Analytics and monitoring disabled.")
     
-    # Validate vectorstore directory exists before initialization
-    if not Config.VECTORSTORE_DIR.exists():
-        logging.error(f"Vector store not found at {Config.VECTORSTORE_DIR}")
-        raise FileNotFoundError(f"L'index vectoriel n'a pas été trouvé dans {Config.VECTORSTORE_DIR}")
+    # Valider le répertoire vectorstore uniquement si Chroma est utilisé
+    if Config.BDD_PROVIDER == "Chroma":
+        if not Config.VECTORSTORE_DIR.exists():
+            logging.error(f"Répertoire Vectorstore Chroma non trouvé à {Config.VECTORSTORE_DIR}")
+            # On pourrait vouloir le créer ici ou simplement logger une erreur critique si le script de peuplement n'a pas tourné
+            # Pour l'instant, on ne quitte pas, mais l'initialisation de Chroma échouera probablement.
+            # exit(1) # Décommenter pour forcer l'arrêt si le dir Chroma est manquant
+            logging.warning(f"AVERTISSEMENT: Répertoire Vectorstore Chroma non trouvé à {Config.VECTORSTORE_DIR}. L'initialisation de Chroma pourrait échouer.")
 
 # Run validation during import
 validate_environment() 

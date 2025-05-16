@@ -1,41 +1,75 @@
 import logging
 import time
-from typing import List, Tuple, Any, Optional, Dict
+from typing import List, Tuple, Any, Optional, Dict, Union
 from langchain_community.vectorstores import Chroma
+from langchain_pinecone import Pinecone as LangchainPinecone
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_core.documents import Document
+from langchain_core.retrievers import BaseRetriever
 from langchain_cohere import CohereRerank
 from langchain_openai import ChatOpenAI
 from .config import Config
 
-def initialize_retrievers(vectorstore: Chroma, llm: ChatOpenAI) -> Dict[str, Any]:
-    # Base retriever for initial fetch (used directly if no reranking)
+def _initialize_chroma_retrievers(vectorstore: Chroma, llm: ChatOpenAI) -> Dict[str, BaseRetriever]:
     base_retriever = vectorstore.as_retriever(
-        search_kwargs={"k": Config.DEFAULT_K} 
+        search_kwargs={"k": Config.DEFAULT_K}
     )
-    
-    # Retriever used *before* reranking (fetches more documents)
-    logging.info(f"DEBUG: Initializing rerank_base_retriever, current Config.RERANK_K = {Config.RERANK_K}")
     rerank_base_retriever = vectorstore.as_retriever(
         search_kwargs={"k": Config.RERANK_K}
     )
-    
-    # Multi-query retriever
     multi_query_retriever = MultiQueryRetriever.from_llm(
         retriever=base_retriever,
         llm=llm,
     )
-    
-    logging.info(f"Base retriever initialized (k={Config.DEFAULT_K}), "
-                f"Rerank base retriever initialized (k={Config.RERANK_K}), "
-                f"Multi-query retriever initialized.")
-    
+    logging.info(f"Retriever Chroma de base (k={Config.DEFAULT_K}), "
+                 f"Retriever Chroma base pour rerank (k={Config.RERANK_K}), "
+                 f"Retriever Chroma multi-query initialisés.")
     return {
         "base": base_retriever,
         "rerank_base": rerank_base_retriever,
         "multi_query": multi_query_retriever,
     }
+
+def _initialize_pinecone_retrievers(vectorstore: LangchainPinecone, llm: ChatOpenAI) -> Dict[str, BaseRetriever]:
+    """Initialise les retrievers spécifiques à Pinecone."""
+    # LangchainPinecone (initialisé avec NoOpEmbeddings et text_key implicite via config de l'index)
+    # devrait maintenant gérer l'embedding intégré correctement lors de la recherche.
+    # as_retriever() devrait donc fonctionner comme attendu, en envoyant le texte de la requête.
+    base_retriever = vectorstore.as_retriever(
+        search_kwargs={"k": Config.DEFAULT_K}
+    )
+    # Pour le reranking, on récupère plus de documents initialement.
+    rerank_base_retriever = vectorstore.as_retriever(
+        search_kwargs={"k": Config.RERANK_K} 
+    )
+    # Le MultiQueryRetriever devrait aussi fonctionner avec ce base_retriever Pinecone.
+    multi_query_retriever = MultiQueryRetriever.from_llm(
+        retriever=base_retriever, 
+        llm=llm
+    )
+    logging.info(f"Retriever Pinecone de base (k={Config.DEFAULT_K}), "
+                 f"Retriever Pinecone base pour rerank (k={Config.RERANK_K}), "
+                 f"Retriever Pinecone multi-query initialisés.")
+    return {
+        "base": base_retriever,
+        "rerank_base": rerank_base_retriever,
+        "multi_query": multi_query_retriever,
+    }
+
+def initialize_retrievers(vectorstore: Union[Chroma, LangchainPinecone], llm: ChatOpenAI) -> Dict[str, BaseRetriever]:
+    """Initialise les retrievers en fonction du type de vectorstore fourni."""
+    provider = Config.BDD_PROVIDER 
+    # Note: On pourrait aussi vérifier isinstance(vectorstore, Chroma) ou LangchainPinecone
+    # pour plus de robustesse, au lieu de se fier uniquement à Config.BDD_PROVIDER ici.
+
+    if provider == "Pinecone" and isinstance(vectorstore, LangchainPinecone):
+        return _initialize_pinecone_retrievers(vectorstore, llm)
+    elif provider == "Chroma" and isinstance(vectorstore, Chroma):
+        return _initialize_chroma_retrievers(vectorstore, llm)
+    else:
+        logging.error(f"Type de vectorstore incompatible ('{type(vectorstore)}') pour le BDD_PROVIDER configuré ('{provider}').")
+        raise ValueError(f"Configuration de vectorstore invalide pour {provider}.")
 
 def initialize_reranker() -> Optional[CohereRerank]:
     if Config.COHERE_API_KEY:
