@@ -31,7 +31,7 @@ export const HeroSection = () => {
             asChild
           >
             <Link href="#" className="hover:no-underline">
-              Propulsé par l'IA
+              Propulsé par l&apos;IA
               <Icon
                 className="ml-2 flex-none"
                 icon="solar:arrow-right-linear"
@@ -82,7 +82,7 @@ export const HeroSection = () => {
                     type: "spring",
                   }}
                 >
-                  Un assistant IA complet qui exploite les données du site CY Tech et vos emails pour vous offrir une expérience personnalisée. Découvrez le RAG sur site, RAG Mail, Playground avancé et suivez vos statistiques d'utilisation.
+                  Un assistant IA complet qui exploite les données du site CY Tech et vos emails pour vous offrir une expérience personnalisée. Découvrez le RAG sur site, RAG Mail, Playground avancé et suivez vos statistiques d&apos;utilisation.
                 </m.div>
 
                 <m.div

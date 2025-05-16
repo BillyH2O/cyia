@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { PrismaClient, Chat } from "@prisma/client";
+import { PrismaClient, Chat, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const RAG_BACKEND_URL = process.env.RAG_BACKEND_URL || "http://localhost:5000/api/chat";
@@ -10,6 +10,23 @@ async function generateChatTitle(firstMessage: string): Promise<string> {
   const words = firstMessage.split(' ');
   const title = words.slice(0, 5).join(' ') + (words.length > 5 ? '...' : '');
   return title;
+}
+
+interface RagSource {
+  content: string;
+  metadata: Prisma.JsonValue;
+}
+
+interface RagResponse {
+  answer?: string;
+  model?: string;
+  processing_time?: number;
+  sources?: RagSource[];
+  source_evaluation?: string;
+  cost?: number;
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
 }
 
 export async function POST(req: NextRequest) {
@@ -27,20 +44,6 @@ export async function POST(req: NextRequest) {
       question,
       model,
       chatId: currentChatId,
-    } = body;
-
-    const {
-      evaluate_sources,
-      use_reranker,
-      use_multi_query,
-      temperature,
-      top_p,
-      top_k,
-      frequency_penalty,
-      presence_penalty,
-      repetition_penalty,
-      seed,
-      max_tokens,
       ...restParams
     } = body;
 
@@ -83,8 +86,6 @@ export async function POST(req: NextRequest) {
         chatId: chatId,
         role: "user",
         content: question,
-        // model: null, // Model doesn't apply to user message
-        // processingTime: null,
       },
     });
 
@@ -127,7 +128,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const ragData = await ragResponse.json();
+    const ragData: RagResponse = await ragResponse.json();
     console.log("RAG Backend Response Data:", ragData);
 
     // --- 4. Save Bot Message to DB ---
@@ -146,7 +147,7 @@ export async function POST(req: NextRequest) {
     // --- 4b. Save Sources if they exist ---
     if (ragData.sources && Array.isArray(ragData.sources)) {
       await prisma.source.createMany({
-        data: ragData.sources.map((source: any) => ({
+        data: ragData.sources.map((source: RagSource) => ({
           messageId: botMessageDb.id,
           content: source.content || '',
           metadata: source.metadata || {},
@@ -161,7 +162,7 @@ export async function POST(req: NextRequest) {
      });
 
     // --- 6. Return Bot Response (and new chatId if created) ---
-    const responsePayload: any = {
+    const responsePayload = {
       sender: 'bot',
       text: botMessageContent,
       sources: ragData.sources, 

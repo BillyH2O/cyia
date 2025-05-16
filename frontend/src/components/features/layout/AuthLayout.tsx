@@ -12,26 +12,22 @@ interface AuthLayoutProps {
 export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
     <div className="relative flex min-h-screen w-full">
-      {/* Logo - Positioned absolutely to the top-left of the screen */}
       <Link href="/" className="absolute left-4 top-4 z-10 flex items-center gap-2 cursor-pointer">
         <CytechLogo size={30} />
         <p className="font-medium text-foreground hidden sm:block">CY IA</p>
       </Link>
 
-      {/* Form Section (Left) - Padding top to avoid overlap with fixed logo */}
       <div className="flex w-full flex-col items-center justify-center bg-background p-4 pt-20 lg:w-1/2 min-h-screen">
-        {/* Form Content Wrapper */}
         <div className="flex w-full max-w-sm flex-col items-center gap-4">
           <div className="w-full text-left">
             <p className="pb-2 text-xl font-medium">{title}</p>
             <p className="text-sm text-default-500">{subtitle}</p>
           </div>
 
-          {children} {/* This is where the specific form and OAuth buttons will go */}
+          {children} 
         </div>
       </div>
 
-      {/* Image Section (Right) */}
       <div
         className="hidden lg:flex lg:w-1/2 min-h-screen items-center justify-center relative"
         style={{
@@ -40,7 +36,6 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           backgroundPosition: "center",
         }}
       >
-        {/* Content can be added here if needed, e.g., a quote */}
       </div>
     </div>
   );

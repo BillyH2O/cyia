@@ -2,8 +2,6 @@
 
 import { TiltedScroll } from "../ui/tilted-scroll";
 
-
-
 const customItemsForTiltedScroll = [
   { id: "ts1", text: "Real-time Collaboration" },
   { id: "ts2", text: "Advanced AI Integrations" },

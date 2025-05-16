@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next"
-import { PrismaClient } from '@prisma/client';
-// Assurez-vous que le chemin vers authOptions est correct
+import { PrismaClient, Prisma } from '@prisma/client';
 import { authOptions } from "../../auth/[...nextauth]/route"; 
 
 const prisma = new PrismaClient();
@@ -62,10 +61,10 @@ export async function POST(request: Request) {
       id: analyticsEntry.id
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erreur lors de l\'enregistrement des données d\'analytique:', error);
     // Prisma errors often have a code & meta field
-    if (error && error.code && error.meta) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       console.error('Prisma error code:', error.code, 'meta:', error.meta);
     }
     const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';

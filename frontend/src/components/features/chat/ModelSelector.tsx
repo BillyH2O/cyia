@@ -20,7 +20,6 @@ interface ModelSelectorProps {
   providerLogoMap: Record<string, string>;
 }
 
-// Ordre de tri personnalisé pour les modèles
 const customModelOrder: string[] = [
   "mistral/ministral-8b",
   "anthropic/claude-3.7-sonnet",

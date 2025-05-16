@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { LucideIcon, Home, Mail, FlaskConical, BarChart3, Info } from 'lucide-react';
 
-// Add the icons object that's being imported in SidebarNavigation
 export const icons = {
   Home,
   Mail,

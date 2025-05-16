@@ -67,7 +67,7 @@ export const Skeleton = () => {
 
   useEffect(() => {
     animate(sequence, {
-      // @ts-ignore
+      // @ts-expect-error - animate function from motion/react doesn't have proper types
       repeat: Infinity,
       repeatDelay: 1,
     });

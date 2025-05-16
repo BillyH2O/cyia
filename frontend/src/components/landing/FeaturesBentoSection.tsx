@@ -1,11 +1,8 @@
 'use client';
 
-// import { BentoGrid, type BentoItem } from "@/components/ui/bento-grid"; // No longer used
-
 import { DisplayCardsDemoSection } from "./DisplayCardsDemoSection";
 import { CpuArchitectureDemoSection } from "./CpuArchitectureDemoSection";
-// import { PanelsTopLeft, Rows, TerminalSquare } from "lucide-react"; // No longer used
-import { Card, CardSkeletonContainer, Skeleton } from "@/components/ui/cards-demo-3";
+import { CardSkeletonContainer, Skeleton } from "@/components/ui/cards-demo-3";
 import { SectionTitle } from "./SectionTitle";
 
 export function FeaturesBentoSection() {

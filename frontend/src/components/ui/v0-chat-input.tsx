@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import { Textarea } from "./textarea"; // Correction chemin relatif
+import { useEffect, useRef, useCallback } from "react";
+import { Textarea } from "./textarea";
 import { cn } from "@/lib/utils";
 import {
-    ImageIcon,
-    FileUp,
-    Figma,
-    MonitorIcon,
-    CircleUserRound,
-    ArrowUpIcon,
     Paperclip,
     PlusIcon,
+    ArrowUpIcon,
 } from "lucide-react";
 
 interface UseAutoResizeTextareaProps {
@@ -70,7 +65,6 @@ interface V0ChatInputProps {
   value: string;
   onValueChange: (value: string) => void;
   onSubmit: () => void; // Changé: plus besoin d'événement
-  isLoading: boolean;
   isDisabled: boolean; // Combinaison de isLoading et !selectedModel
 }
 
@@ -80,7 +74,6 @@ export function V0ChatInput({
   value,
   onValueChange,
   onSubmit,
-  isLoading,
   isDisabled // Utiliser isDisabled
 }: V0ChatInputProps) {
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
@@ -195,33 +188,6 @@ export function V0ChatInput({
                         </div>
                     </div>
                 </div>
-                {/* --- Les ActionButtons peuvent être enlevés si non utilisés pour l'instant --- */}
-                {/* <div className="flex items-center justify-center gap-3 mt-4">
-                    <ActionButton icon={<ImageIcon className="w-4 h-4" />} label="Clone a Screenshot" />
-                    <ActionButton icon={<Figma className="w-4 h-4" />} label="Import from Figma" />
-                    <ActionButton icon={<FileUp className="w-4 h-4" />} label="Upload a Project" />
-                    <ActionButton icon={<MonitorIcon className="w-4 h-4" />} label="Landing Page" />
-                    <ActionButton icon={<CircleUserRound className="w-4 h-4" />} label="Sign Up Form" />
-                </div> */}
             </div>
-        // </div>
     );
 }
-
-// --- ActionButton non modifié, peut être enlevé si non utilisé ---
-interface ActionButtonProps {
-    icon: React.ReactNode;
-    label: string;
-}
-
-function ActionButton({ icon, label }: ActionButtonProps) {
-    return (
-        <button
-            type="button"
-            className="flex items-center gap-2 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors text-xs"
-        >
-            {icon}
-            <span>{label}</span>
-        </button>
-    );
-} 

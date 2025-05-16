@@ -1,7 +1,7 @@
 'use client';
 
 import DisplayCards from "@/components/ui/display-cards";
-import { type DisplayCardProps } from "@/components/ui/display-cards"; // Import the interface
+import { type DisplayCardProps } from "@/components/ui/display-cards";
 import { Sparkles, Zap, Target } from "lucide-react";
 
 const cardsForDemo: DisplayCardProps[] = [

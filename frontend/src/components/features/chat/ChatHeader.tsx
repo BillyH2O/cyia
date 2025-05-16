@@ -1,10 +1,9 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { 
-  LogOut, Settings, User as UserIcon, PlayCircle, HelpCircle, 
+  LogOut, Settings, User as UserIcon, 
   BookOpen, Mail
 } from "lucide-react";
 
@@ -17,8 +16,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Switch } from '@/components/ui/switch';
-import { useChatContext } from '@/contexts/ChatContext';
 import { Button } from '@/components/ui/button';
 
 export default function ChatHeader() {

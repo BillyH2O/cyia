@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardSkeletonContainer, Skeleton } from "@/components/ui/cards-demo-3";
+import { CardSkeletonContainer, Skeleton } from "@/components/ui/cards-demo-3";
 import { CpuArchitectureDemoSection } from "../demos/CpuArchitectureDemoSection";
 import { SectionTitle } from "../../../ui/SectionTitle";
 import { DisplayCardsDemoSection } from "../demos/DisplayCardsDemoSection";

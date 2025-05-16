@@ -4,7 +4,6 @@ import { useChatContext } from '@/contexts/ChatContext';
 import { promptTemplates } from '@/config/provider-config';
 import { TextShimmer } from '@/components/ui/text-shimmer';
 
-// Version qui utilise le contexte
 export function EmptyChat() {
   const { sendMessage } = useChatContext();
   

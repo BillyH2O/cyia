@@ -1,7 +1,18 @@
 import React from 'react';
 
+interface SourceMetadata {
+  url?: string;
+  title?: string;
+  filename?: string;
+  path?: string;
+  type?: string;
+  language?: string;
+  lastModified?: string;
+  size?: number;
+}
+
 export interface SourcesListProps {
-  sources: Array<{ content: string; metadata?: any }>;
+  sources: Array<{ content: string; metadata?: SourceMetadata }>;
 }
 
 export const SourcesList: React.FC<SourcesListProps> = ({ sources }) => (

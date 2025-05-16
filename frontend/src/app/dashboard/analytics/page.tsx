@@ -1,11 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-  Cell, 
-  LineChart, Line, AreaChart, Area
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, AreaChart, Area} from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from '@/components/features/layout/DashboardLayout';
 
@@ -37,6 +33,13 @@ interface AnalyticsSummary {
   avgTotalTokensPerReq: number;
   totalCost: number;
   totalTokens: number;
+}
+
+interface TooltipProps {
+  payload?: Array<{
+    value: number;
+    name: string;
+  }>;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ff6b6b', '#6a89cc', '#4bcffa', '#fad390', '#b8e994', '#f368e0'];
@@ -79,7 +82,7 @@ export default function AnalyticsPage() {
     }
   
     if (!data || data.totalMessages === 0) {
-      return <div className="flex items-center justify-center h-[calc(100vh-10rem)]">Aucune donnée d'analyse disponible.</div>;
+      return <div className="flex items-center justify-center h-[calc(100vh-10rem)]">Aucune donnée d&apos;analyse disponible.</div>;
     }
 
     // Préparation des données pour l'histogramme avec les couleurs attribuées
@@ -90,7 +93,7 @@ export default function AnalyticsPage() {
 
     return (
       <div className="container mx-auto p-4 md:p-8 space-y-6">
-        <h1 className="text-3xl font-bold mb-6">Statistiques d'Utilisation</h1>
+        <h1 className="text-3xl font-bold mb-6">Statistiques d&apos;Utilisation</h1>
   
         {/* Statistiques Globales */}
         <Card>
@@ -114,12 +117,6 @@ export default function AnalyticsPage() {
               <p className="text-2xl font-semibold">{data.featureUsage.useStreaming}</p>
               <p className="text-sm text-muted-foreground">Streaming</p>
             </div>
-            {/*
-            <div>
-              <p className="text-2xl font-semibold">{data.featureUsage.useMultiQuery}</p>
-              <p className="text-sm text-muted-foreground">Multi-Query</p>
-            </div>
-            */}
           </CardContent>
         </Card>
   
@@ -175,7 +172,7 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="name" hide={true} />
                   <YAxis allowDecimals={false} />
                   <Tooltip 
-                    formatter={(value: number, name: string, props: any) => [`${value} utilisations`, props.payload.name]} 
+                    formatter={(value: number, name: string, props: TooltipProps) => [`${value} utilisations`, props?.payload?.[0]?.name ?? '']} 
                     labelFormatter={() => ''}
                   />
                   <Bar dataKey="count" name="Utilisations" fill="#8884d8">
