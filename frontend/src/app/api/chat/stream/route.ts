@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 const BACKEND_STREAM_URL = process.env.RAG_BACKEND_STREAM_URL || 'http://localhost:5000/api/chat/stream';
 
 export async function POST(req: NextRequest) {
+  console.log(`[Next.js Proxy Stream] Attempting to proxy to: ${BACKEND_STREAM_URL}`);
   const body = await req.text();
 
   const backendResp = await fetch(BACKEND_STREAM_URL, {

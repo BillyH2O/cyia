@@ -30,6 +30,7 @@ interface RagResponse {
 }
 
 export async function POST(req: NextRequest) {
+  console.log(`[Next.js Proxy Send] Attempting to proxy to: ${RAG_BACKEND_URL}`);
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

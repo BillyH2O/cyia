@@ -48,8 +48,8 @@ export function useChat(initialChatId?: string | null) {
   const fetchAvailableModels = useCallback(async () => {
     try {
       setIsLoadingModels(true);
-      // Utiliser la variable d'environnement pour l'URL de base, avec un fallback pour le développement local si non définie
       const backendBaseUrl = process.env.NEXT_PUBLIC_RAG_BASE_URL || 'http://localhost:5000';
+      console.log("Debug - Attempting to fetch models from:", `${backendBaseUrl}/api/models`);
       const response = await fetch(`${backendBaseUrl}/api/models`);
 
       if (!response.ok) {
