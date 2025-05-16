@@ -5,7 +5,17 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 
+// Initialise Prisma client (single instance)
 const prisma = new PrismaClient();
+
+// ---------------------------------------------------------------------------
+//                      NextAuth Type Augmentations
+// ---------------------------------------------------------------------------
+// These module declarations extend the default types provided by NextAuth so
+// that the added properties (e.g. `id`) are available throughout the app.
+// Because this file will be imported by every route/component that needs
+// `authOptions`, the declarations only need to live here.
+// ---------------------------------------------------------------------------
 
 declare module "next-auth" {
   interface Session {
@@ -14,7 +24,7 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-    }
+    };
   }
 }
 
@@ -24,13 +34,24 @@ declare module "next-auth/jwt" {
   }
 }
 
+// ---------------------------------------------------------------------------
+//                              Auth Options
+// ---------------------------------------------------------------------------
+// Centralised configuration for Next-Auth.  Import this object anywhere you  
+// need to call `getServerSession` so that the same configuration is used in   
+// every route.                                                                
+// ---------------------------------------------------------------------------
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
+    // OAuth provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+
+    // Credentials provider (email + password)
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -54,6 +75,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
+          // Either the user doesn't exist or signed up via OAuth
           throw new Error("Email ou mot de passe incorrect");
         }
 
@@ -66,12 +88,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email ou mot de passe incorrect");
         }
 
+        // Return user object without password
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           image: user.image,
-        };
+        } as const;
       },
     }),
   ],
@@ -85,7 +108,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = (user as any).id as string;
       }
       return token;
     },
@@ -96,8 +119,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith(baseUrl) || url === '/') {
-        if (url.includes('callbackUrl=')) {
+      if (url.startsWith(baseUrl) || url === "/") {
+        if (url.includes("callbackUrl=")) {
           return url;
         }
         return `${baseUrl}/dashboard`;
