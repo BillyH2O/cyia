@@ -11,20 +11,17 @@ from scripts.preprocessing import preprocess
 from scripts.preprocessing import create_vectorstore 
 
 def ensure_playwright_browsers():
-    """S'assure que les navigateurs Playwright sont installés"""
-    print("Vérification de l'installation des navigateurs Playwright...")
+    """Installe Playwright ET ses dépendances système (librairies Linux)"""
+    print("Installation des dépendances système + navigateurs Playwright…")
     try:
+        # --with-deps ajoute les paquets système nécessaires à Chromium
         subprocess.run(
-            [sys.executable, "-m", "playwright", "install", "chromium"],
+            [sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"],
             check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
         )
-        print("Navigateurs Playwright installés avec succès.")
+        print("Playwright et toutes ses dépendances sont prêts.")
     except subprocess.CalledProcessError as e:
-        print(f"Erreur lors de l'installation des navigateurs Playwright: {e}")
-        print(f"Sortie stdout: {e.stdout.decode() if e.stdout else 'N/A'}")
-        print(f"Sortie stderr: {e.stderr.decode() if e.stderr else 'N/A'}")
+        print("Échec de l'installation Playwright:", e)
         raise
 
 def run_scraping():
