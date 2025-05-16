@@ -5,21 +5,19 @@ import { BookOpen, Mail } from "lucide-react";
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { UserAccountNav } from "./UserAccountNav"; // Import the new component
+import { UserAccountNav } from "./UserAccountNav"; 
 
-// Define page titles based on pathname
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/playground': 'Playground',
   '/dashboard/analytics': 'Statistiques',
   '/dashboard/contact': 'Contact',
-  '/': 'Dashboard', // fallback for root
+  '/': 'Dashboard', 
 };
 
 const DEFAULT_TITLE = 'CY Tech AI Assistant';
 
 const getPageTitle = (pathname: string): string => {
-  // Handle chat dynamic routes under /dashboard/chat/[id]
   if (pathname.startsWith('/dashboard/chat/')) {
     return 'Chat';
   }

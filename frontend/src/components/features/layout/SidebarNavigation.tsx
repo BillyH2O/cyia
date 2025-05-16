@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { NavButton, icons } from '@/components/features/layout/NavButton';
 import { NewChatButton } from '@/components/features/chat/NewChatButton';
 import { useChatContext } from '@/contexts/ChatContext';
-import Link from 'next/link';
 
 export interface NavItem {
   id: string;
@@ -59,17 +58,19 @@ export const navigationItems: NavItem[] = [
   },
 ];
 
-export const homePageSpecificItems = (createNewChat: () => void): NavItem[] => [
+const useIsHomePage = () => {
+  const pathname = usePathname();
+  return pathname === '/dashboard';
+};
+
+export const homePageSpecificItems = (): NavItem[] => [
   {
     id: 'new-chat',
     label: 'Nouveau Chat',
     path: '/', 
     icon: 'Home', 
     isNewChat: true,
-    condition: () => {
-      const pathname = usePathname();
-      return pathname === '/dashboard';
-    },
+    condition: useIsHomePage,
     hideWhenCollapsed: false, 
   },
 ];
@@ -77,7 +78,6 @@ export const homePageSpecificItems = (createNewChat: () => void): NavItem[] => [
 export function SidebarNavigation({ isOpen, isMobileSheet }: SidebarNavigationProps) {
   const pathname = usePathname();
   const { createNewChat } = useChatContext();
-  const isHomePage = pathname === '/dashboard';
   const showTextInSidebar = isOpen || isMobileSheet;
 
   const isActive = (item: NavItem) => {
@@ -88,7 +88,7 @@ export function SidebarNavigation({ isOpen, isMobileSheet }: SidebarNavigationPr
   };
 
   const regularItems = navigationItems.filter(item => !((item.hideWhenCollapsed && !isOpen) && !isMobileSheet) );
-  const newChatButton = homePageSpecificItems(createNewChat).find(item => 
+  const newChatButton = homePageSpecificItems().find(item => 
     item.isNewChat && 
     (!item.condition || item.condition()) && 
     !((item.hideWhenCollapsed && !isOpen) && !isMobileSheet)
@@ -96,8 +96,6 @@ export function SidebarNavigation({ isOpen, isMobileSheet }: SidebarNavigationPr
 
   return (
     <div className={`p-2 space-y-2 ${showTextInSidebar ? 'border-b' : 'flex flex-col items-center mt-4'}`}>
-
-            
       {regularItems.map((item) => {
         const active = isActive(item);
         const widthClass = showTextInSidebar ? 'w-full justify-start' : 'w-10 h-10';

@@ -10,7 +10,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Settings, Info } from "lucide-react"; 
+import { Settings } from "lucide-react"; 
 import { AdvancedOptionsPanel } from "./AdvancedOptionsPanel";
 
 interface AdvancedOptionsSheetProps {

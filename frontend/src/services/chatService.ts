@@ -1,5 +1,5 @@
 // Service pour gérer les opérations sur les chats
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export interface MessageInput {
 
 export interface SourceInput {
   content: string;
-  metadata?: any;
+  metadata?: Prisma.InputJsonValue;
   messageId: string;
 }
 

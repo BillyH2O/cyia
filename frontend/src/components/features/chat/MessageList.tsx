@@ -1,7 +1,6 @@
 'use client';
 
 import React, { RefObject } from 'react';
-import { Message } from '@/types/chat';
 import {
   UserAvatar,
   BotAvatar,
@@ -18,19 +17,15 @@ interface MessageListProps {
   cyTechLogo?: string | null;
 }
 
-/**
- * Composant affichant la liste des messages dans une conversation
- */
+
 const MessageList: React.FC<MessageListProps> = ({
   messagesEndRef,
   userImage,
   userName,
   cyTechLogo,
 }) => {
-  // Utiliser le contexte de chat au lieu des props
   const { messages, isSending, availableModels } = useChatContext();
 
-  // Fonction pour obtenir le logo du modèle
   const getModelLogo = (modelId: string): string | null => {
     if (!availableModels || !modelId || !providerLogoMap) return null;
     
@@ -40,7 +35,6 @@ const MessageList: React.FC<MessageListProps> = ({
     return providerLogoMap[model.provider];
   };
 
-  // Fonction pour obtenir le nom du modèle à partir de son ID
   const getModelName = (modelId: string): string => {
     if (!availableModels || !modelId) return modelId;
     

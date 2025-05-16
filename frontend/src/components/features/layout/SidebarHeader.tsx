@@ -2,7 +2,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import Image from 'next/image';
 import { CytechLogo } from '@/components/ui/CytechLogo';
 
 interface SidebarHeaderProps {

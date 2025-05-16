@@ -16,7 +16,6 @@ export const FadeInImage = (props: ImgHTMLAttributes<HTMLImageElement>) => {
     if (isLoaded) {
       animationControls.start("visible");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
   return (

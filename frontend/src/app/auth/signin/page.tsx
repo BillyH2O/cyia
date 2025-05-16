@@ -32,7 +32,8 @@ export default function SignIn() {
         router.push("/dashboard");
       }
     } catch (err) {
-      setError("Une erreur de communication est survenue. Veuillez réessayer.");
+      const errorMessage = err instanceof Error ? err.message : "Une erreur de communication est survenue.";
+      setError(`${errorMessage} Veuillez réessayer.`);
     } finally {
       setLoading(false);
     }
@@ -112,7 +113,7 @@ export default function SignIn() {
       <p className="pt-4 text-center text-sm text-foreground">
         Pas encore de compte ?{' '}
         <Link href="/auth/signup" className="font-medium text-primary hover:underline">
-          S'inscrire
+          S&apos;inscrire
         </Link>
       </p>
     </AuthLayout>

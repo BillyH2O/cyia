@@ -1,5 +1,18 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { Message, Model, ModelsResponse, Source } from '../types/chat';
+import type { Message, Model, Source } from '../types/chat';
+
+interface MessageResponse {
+  role: string;
+  content: string;
+  sources?: Source[];
+  processingTime?: number;
+  model?: string;
+}
+
+interface ModelsResponse {
+  models: Record<string, Model>;
+  default: string;
+}
 
 export function useChat(initialChatId?: string | null) {
   const [input, setInput] = useState<string>('');
@@ -76,7 +89,7 @@ export function useChat(initialChatId?: string | null) {
       const data = await response.json();
       console.log('Réponse complète du backend:', data);
       // Adapt fetched messages to the Message type
-      const formattedMessages = data.map((msg: any) => ({
+      const formattedMessages = data.map((msg: MessageResponse) => ({
         sender: msg.role === 'user' ? 'user' : 'bot',
         text: msg.content,
         sources: msg.sources,
@@ -290,7 +303,12 @@ export function useChat(initialChatId?: string | null) {
 
   // --- Streaming implementation (needs modification) ---
   // Pass isPlayground and payload to streamSend
-  const streamSend = async (questionText: string, endpointUrl: string, isPlayground: boolean, payload: any) => { 
+  const streamSend = async (
+    questionText: string, 
+    endpointUrl: string, 
+    isPlayground: boolean, 
+    payload: Record<string, unknown>
+  ) => { 
     // 1. Add bot placeholder message immediately with the model info
     const userMessageIndex = messages.length; // L'index du message utilisateur qu'on vient d'ajouter
     const botPlaceholderIndex = userMessageIndex; // Utiliser un index fixe pour le placeholder du bot
@@ -313,9 +331,9 @@ export function useChat(initialChatId?: string | null) {
     let sourceData: Source[] | undefined = undefined;
     let evaluationData: string | null = null;
     let processingTime: number | null = null;
-    let streamStartTime = Date.now();
+    const streamStartTime = Date.now();
     // Token metrics from metadata
-    let tokenMetadata = {
+    const tokenMetadata = {
       promptTokens: 0,
       completionTokens: 0,
       totalTokens: 0,
@@ -391,8 +409,9 @@ export function useChat(initialChatId?: string | null) {
               if (jsonData.content) {
                 streamedText += jsonData.content;
               }
-            } catch (e) {
+            } catch (error) {
               // Si ce n'est pas du JSON, c'est du texte simple
+              console.error('Erreur de parsing JSON:', error);
               streamedText += data;
             }
 
@@ -451,20 +470,17 @@ export function useChat(initialChatId?: string | null) {
          console.warn("Analytics not logged for streamed chat: Chat ID could not be determined.");
       } // No warning needed for playground mode
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Streaming error:', error);
       setMessages((prev) => {
         const updated = [...prev];
-        // Vérifier que nous avons le bon nombre de messages
         if (updated.length > botPlaceholderIndex && updated[updated.length - 1].isStreaming) {
-          // Mettre à jour seulement le dernier message qui est en streaming
           updated[updated.length - 1] = {
             ...updated[updated.length - 1],
             text: streamedText || 'Erreur lors du streaming.',
             isStreaming: false
           };
         } else {
-          // Fallback au cas où
           updated.push({ 
             sender: 'bot', 
             text: 'Erreur lors du streaming.' 

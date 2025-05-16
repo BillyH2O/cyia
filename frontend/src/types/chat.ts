@@ -11,14 +11,22 @@ export interface Message {
     isStreaming?: boolean; // Optional: Indicates if this message is currently streaming
 }
 
+// Structure for source metadata
+export interface SourceMetadata {
+    title?: string;
+    url?: string;
+    filename?: string;
+    path?: string;
+    type?: string;
+    language?: string;
+    lastModified?: string;
+    size?: number;
+}
+
 // Structure for a source (based on backend response)
 export interface Source {
     content: string;
-    metadata: {
-        title?: string;
-        url?: string;
-        [key: string]: any; // Allow other metadata fields
-    };
+    metadata: SourceMetadata;
 }
 
 // Structure for the available models from the backend

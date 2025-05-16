@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { chatService } from '@/services/chatService';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../auth/[...nextauth]/route';
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+interface Source {
+  content: string;
+  metadata?: Prisma.JsonValue;
+}
 
 // POST /api/chats/[chatId]/messages - Ajouter un message à un chat
 export async function POST(
@@ -40,7 +45,7 @@ export async function POST(
     // Si des sources sont fournies, les ajouter
     if (sources && Array.isArray(sources) && sources.length > 0) {
       await chatService.addSources(
-        sources.map((source: any) => ({
+        sources.map((source: Source) => ({
           content: source.content,
           metadata: source.metadata || {},
           messageId: message.id,

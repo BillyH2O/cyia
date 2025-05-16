@@ -19,7 +19,7 @@ interface PlaygroundSettingsButtonProps {
 }
 
 export function PlaygroundSettingsButton({ isMobile }: PlaygroundSettingsButtonProps) {
-  const { toggleOptionsVisibility, isOptionsVisible } = useChatContext();
+  const { toggleOptionsVisibility } = useChatContext();
 
   if (!isMobile) {
     return (

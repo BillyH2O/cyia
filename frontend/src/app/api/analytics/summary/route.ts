@@ -9,7 +9,7 @@ function formatDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   // 1. Authentification
   const session = await getServerSession(authOptions); // Pass the authOptions
   if (!session || !session.user || !session.user.id) {
