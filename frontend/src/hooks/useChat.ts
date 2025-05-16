@@ -48,7 +48,9 @@ export function useChat(initialChatId?: string | null) {
   const fetchAvailableModels = useCallback(async () => {
     try {
       setIsLoadingModels(true);
-      const response = await fetch('http://localhost:5000/api/models');
+      // Utiliser la variable d'environnement pour l'URL de base, avec un fallback pour le développement local si non définie
+      const backendBaseUrl = process.env.NEXT_PUBLIC_RAG_BASE_URL || 'http://localhost:5000';
+      const response = await fetch(`${backendBaseUrl}/api/models`);
 
       if (!response.ok) {
         console.error('Failed to fetch models:', response.statusText);
