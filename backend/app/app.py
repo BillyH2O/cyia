@@ -38,9 +38,11 @@ if not os.path.exists(vectorstore_path):
 
 app = Flask(__name__)
 # --- CORS Configuration ---
-cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(',') # Allow requests from Next.js default development port (3000)
-CORS(app, resources={r"/api/*": {"origins": cors_origins}}) 
-logging.info(f"CORS enabled for origins: {cors_origins}")
+raw_origins_string = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
+# Nettoyer chaque URL : supprimer les espaces en début/fin et le point-virgule final éventuel
+cors_origins = [origin.strip().rstrip(';') for origin in raw_origins_string.split(',')]
+CORS(app, resources={r"/api/*": {"origins": cors_origins}})
+logging.info(f"CORS enabled for (cleaned) origins: {cors_origins}")
 
 # --- Middleware pour l'instrumentation des APIs et l'intégration Helicone ---
 def track_api_performance(f):
