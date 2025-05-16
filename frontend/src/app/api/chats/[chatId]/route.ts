@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { chatService } from '@/services/chatService';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 // GET /api/chats/[chatId] - Récupérer un chat spécifique avec ses messages
 export async function GET(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { chatId: string } }
 ) {
   try {
@@ -36,12 +36,10 @@ export async function GET(
 
 // DELETE /api/chats/[chatId] - Supprimer un chat
 export async function DELETE(
-  req: NextRequest,
-  { params: paramsPromise }: { params: Promise<{ chatId: string }> | { chatId: string } }
+  req: Request,
+  { params }: { params: { chatId: string } }
 ) {
-  // Attendre la résolution de params si c'est une promesse
-  const resolvedParams = await paramsPromise;
-  const chatId = resolvedParams.chatId;
+  const { chatId } = params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

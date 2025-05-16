@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { chatService } from '@/services/chatService';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
@@ -13,10 +13,10 @@ interface Source {
 
 // POST /api/chats/[chatId]/messages - Ajouter un message à un chat
 export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ chatId: string }> }
+  req: Request,
+  { params }: { params: { chatId: string } }
 ) {
-  const { chatId } = await params;
+  const { chatId } = params;
   try {
     const session = await getServerSession(authOptions);
     
@@ -65,9 +65,9 @@ export async function POST(
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ chatId: string }> }
+  { params }: { params: { chatId: string } }
 ) {
-  const { chatId } = await params;
+  const { chatId } = params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
