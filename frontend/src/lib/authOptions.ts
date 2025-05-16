@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as any).id as string;
+        token.id = (user as { id: string }).id;
       }
       return token;
     },
