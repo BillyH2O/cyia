@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
-import { PrismaClient, Chat } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const BACKEND_STREAM_URL = process.env.RAG_BACKEND_STREAM_URL || 'http://localhost:5000/api/chat/stream';
