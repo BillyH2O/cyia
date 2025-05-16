@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { chatService } from '@/services/chatService';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
@@ -64,7 +64,7 @@ export async function POST(
 }
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   context: { params: { chatId: string } }
 ) {
   const { chatId } = context.params;
