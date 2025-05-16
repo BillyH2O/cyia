@@ -87,10 +87,10 @@ class Config:
         },
         
         # Mistral models
-        "mistral/ministral-8b": {
-            "name": "Mistral 8b",
-            "provider": "mistral",
-            "description": "Modèle compact et rapide pour les tâches simples"
+        "mistralai/ministral-8b": {
+            "name": "Mistral 8B (Ministral)",
+            "provider": "mistralai",
+            "description": "Modèle Mistral compact et rapide (Ministral 8B)"
         },
         
         # Google models - Identifiants corrects pour OpenRouter
@@ -178,9 +178,6 @@ def validate_environment() -> None:
     if Config.BDD_PROVIDER == "Chroma":
         if not Config.VECTORSTORE_DIR.exists():
             logging.error(f"Répertoire Vectorstore Chroma non trouvé à {Config.VECTORSTORE_DIR}")
-            # On pourrait vouloir le créer ici ou simplement logger une erreur critique si le script de peuplement n'a pas tourné
-            # Pour l'instant, on ne quitte pas, mais l'initialisation de Chroma échouera probablement.
-            # exit(1) # Décommenter pour forcer l'arrêt si le dir Chroma est manquant
             logging.warning(f"AVERTISSEMENT: Répertoire Vectorstore Chroma non trouvé à {Config.VECTORSTORE_DIR}. L'initialisation de Chroma pourrait échouer.")
 
 # Run validation during import
