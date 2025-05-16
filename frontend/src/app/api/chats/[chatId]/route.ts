@@ -9,9 +9,9 @@ const prisma = new PrismaClient();
 // GET /api/chats/[chatId] - Récupérer un chat spécifique avec ses messages
 export async function GET(
   req: Request,
-  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
+  context: Promise<{ params: { chatId: string } }>
 ) {
-  const { chatId } = await ctx.params;
+  const { chatId } = (await context).params;
   try {
     const session = await getServerSession(authOptions);
     
@@ -38,9 +38,9 @@ export async function GET(
 // DELETE /api/chats/[chatId] - Supprimer un chat
 export async function DELETE(
   req: Request,
-  ctx: { params: Promise<{ chatId: string }> | { chatId: string } }
+  context: Promise<{ params: { chatId: string } }>
 ) {
-  const { chatId } = await ctx.params;
+  const { chatId } = (await context).params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
