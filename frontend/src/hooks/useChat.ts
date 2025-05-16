@@ -20,8 +20,8 @@ export function useChat(initialChatId?: string | null) {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
   const [evaluateSources, setEvaluateSources] = useState<boolean>(false);
-  const [useReranker, setUseReranker] = useState<boolean>(false);
-  const [useStreaming, setUseStreaming] = useState<boolean>(false);
+  const [useReranker, setUseReranker] = useState<boolean>(true);
+  const [useStreaming, setUseStreaming] = useState<boolean>(true);
   const [useMultiQuery, setUseMultiQuery] = useState<boolean>(false);
   const [temperature, setTemperature] = useState<number>(1.0);
   const [topP, setTopP] = useState<number | null>(null);
@@ -59,8 +59,10 @@ export function useChat(initialChatId?: string | null) {
       const data: ModelsResponse = await response.json();
       setAvailableModels(data.models);
 
-      // Set default model or first available
-      if (data.models[data.default]) {
+      // Prioritise "mistral" if available, otherwise backend default, otherwise first model
+      if (data.models['mistral']) {
+        setSelectedModel('mistral');
+      } else if (data.models[data.default]) {
         setSelectedModel(data.default);
       } else if (Object.keys(data.models).length > 0) {
         setSelectedModel(Object.keys(data.models)[0]);
