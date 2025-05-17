@@ -47,9 +47,15 @@ export default function ChatHeader() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => console.log('Doc clicked')} title="Documentation">
-          <BookOpen className="h-5 w-5" />
-        </Button>
+        <a 
+          href="https://github.com/BillyH2O/cyia/rapport-cyia.pdf" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          <Button variant="ghost" size="icon" title="Documentation">
+            <BookOpen className="h-5 w-5" />
+          </Button>
+        </a>
         <Button variant="ghost" size="icon" onClick={() => console.log('Contact clicked')} title="Contact">
           <Mail className="h-5 w-5" />
         </Button>

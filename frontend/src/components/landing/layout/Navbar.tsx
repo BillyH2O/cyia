@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { scrollToElement } from "@/lib/utils";
 
 export function MainNavbar() {
   const { data: session } = useSession();
@@ -24,6 +25,12 @@ export function MainNavbar() {
     } else {
       router.push("/auth/signin");
     }
+  };
+
+  const handleNavItemClick = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+    e.preventDefault();
+    const sectionId = link.replace('#', '');
+    scrollToElement(sectionId);
   };
 
   const navItems = [
@@ -40,8 +47,8 @@ export function MainNavbar() {
       link: "#faq",
     },
     {
-      name: "Contact",
-      link: "#contact",
+      name: "GitHub",
+      link: "https://github.com/BillyH2O/cyia",
     },
   ];
 
@@ -53,7 +60,12 @@ export function MainNavbar() {
         {/* Desktop Navigation */}
         <NavBody>
           <NavbarLogo />
-          <NavItems items={navItems} />
+          <NavItems 
+            items={navItems} 
+            onItemClick={(e: React.MouseEvent<HTMLAnchorElement>, item: { link: string }) => 
+              handleNavItemClick(e, item.link)
+            }
+          />
           <div className="flex items-center gap-4">
             <NavbarButton 
               variant="primary" 
@@ -83,7 +95,10 @@ export function MainNavbar() {
               <a
                 key={`mobile-link-${idx}`}
                 href={item.link}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  handleNavItemClick(e, item.link);
+                  setIsMobileMenuOpen(false);
+                }}
                 className="relative text-neutral-600 dark:text-neutral-300"
               >
                 <span className="block">{item.name}</span>
@@ -93,7 +108,7 @@ export function MainNavbar() {
               <NavbarButton
                 onClick={() => { handleSignInClick(); setIsMobileMenuOpen(false); }}
                 variant="primary"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium w-full"
+                className="bg-primary hover:bg-blue-700 text-white font-medium w-full"
               >
                 Se connecter
               </NavbarButton>

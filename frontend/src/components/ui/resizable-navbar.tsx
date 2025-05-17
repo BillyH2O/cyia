@@ -23,13 +23,10 @@ interface NavBodyProps {
   visible?: boolean;
 }
 
-interface NavItemsProps {
-  items: {
-    name: string;
-    link: string;
-  }[];
+export interface NavItemsProps {
+  items: Array<{ name: string; link: string }>;
   className?: string;
-  onItemClick?: () => void;
+  onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>, item: { name: string; link: string }) => void;
 }
 
 interface MobileNavProps {
@@ -128,7 +125,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
       {items.map((item, idx) => (
         <a
           onMouseEnter={() => setHovered(idx)}
-          onClick={onItemClick}
+          onClick={(e) => onItemClick ? onItemClick(e, item) : undefined}
           className="relative px-4 py-2 text-neutral-600 dark:text-neutral-300"
           key={`link-${idx}`}
           href={item.link}

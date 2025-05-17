@@ -88,7 +88,7 @@ class Config:
         
         # Mistral models
         "mistralai/ministral-8b": {
-            "name": "Mistral 8B (Ministral)",
+            "name": "Mistral 8B",
             "provider": "mistralai",
             "description": "Modèle Mistral compact et rapide (Ministral 8B)"
         },
@@ -108,7 +108,7 @@ class Config:
         },
         
         # Nouveaux modèles OpenRouter
-        "openai/gpt-4.1": {
+        "gpt-4.1": {
             "name": "GPT-4.1",
             "provider": "openai",
             "description": "Modèle GPT-4.1 d'OpenAI avec capacités Vision"
