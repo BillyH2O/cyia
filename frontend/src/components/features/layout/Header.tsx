@@ -38,7 +38,7 @@ export function Header() {
       <div className="flex items-center gap-4"> 
         <div className="flex items-center gap-2">
           <a 
-            href="https://fr.uefa.com/uefachampionsleague/match/2003753--marseille-vs-man-utd/" 
+            href="https://github.com/BillyH2O/cyia/blob/main/rapport-cyia.pdf" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex"

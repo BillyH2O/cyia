@@ -48,7 +48,7 @@ export default function ChatHeader() {
 
       <div className="flex items-center gap-2">
         <a 
-          href="https://github.com/BillyH2O/cyia/rapport-cyia.pdf" 
+          href="https://github.com/BillyH2O/cyia/blob/main/rapport-cyia.pdf" 
           target="_blank" 
           rel="noopener noreferrer"
         >
