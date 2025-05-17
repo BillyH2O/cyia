@@ -88,7 +88,7 @@ export const HeroSection = () => {
                 <m.div
                   key="hero-section-buttons"
                   animate={{ filter: "blur(0px)", opacity: 1, x: 0 }}
-                  className="flex flex-col gap-3 flex-row items-center sm:gap-6"
+                  className="flex gap-3 flex-row items-center sm:gap-6"
                   initial={{ filter: "blur(16px)", opacity: 0, x: 15 + 1 * 4 }}
                   transition={{
                     bounce: 0,
@@ -98,7 +98,7 @@ export const HeroSection = () => {
                   }}
                 >
                   <Button
-                    className="bg-primary hover:bg-blue-700 text-white font-medium w-36"
+                    className="bg-primary hover:bg-blue-700 text-white font-medium w-28"
                     size="sm"
                     onClick={handleDiscoverClick}
                   >
@@ -110,7 +110,11 @@ export const HeroSection = () => {
                     size="default"
                     asChild
                   >
-                    <Link href="#">
+                    <a 
+                      href="https://github.com/BillyH2O/cyia/rapport-cyia.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       En savoir plus
                       <span className="ml-2 flex h-[22px] w-[22px] items-center justify-center">
                         <Icon
@@ -119,7 +123,7 @@ export const HeroSection = () => {
                           width={16}
                         />
                       </span>
-                    </Link>
+                    </a>
                   </Button>
                 </m.div>
               </AnimatePresence>
