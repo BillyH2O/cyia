@@ -111,7 +111,7 @@ export const HeroSection = () => {
                     asChild
                   >
                     <a 
-                      href="https://github.com/BillyH2O/cyia/rapport-cyia.pdf"
+                      href="https://github.com/BillyH2O/cyia/blob/main/rapport-cyia.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
