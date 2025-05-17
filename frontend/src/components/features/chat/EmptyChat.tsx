@@ -11,10 +11,10 @@ export function EmptyChat() {
   const { sendMessage } = useChatContext();
   
   return (
-    <div className="flex flex-col flex-grow items-center justify-center p-6 text-center gap-16">
+    <div className="flex flex-col flex-grow items-center justify-center p-6 text-center gap-4">
       
-      <div className="w-full max-w-[400px] sm:max-w-xl">
-          <Card className="w-full h-[500px] md:h-[400px] bg-black/[0.96] relative overflow-hidden">
+      <div className="w-full max-w-[400px] sm:max-w-xl sm:mt-10">
+          <Card className="w-full h-[400px] md:h-[400px] bg-black/[0.96] relative overflow-hidden">
             <Spotlight
               className="-top-40 left-0 md:left-30 md:-top-20"
               fill="white"
